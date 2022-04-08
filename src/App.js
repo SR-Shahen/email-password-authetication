@@ -2,7 +2,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import app from './firebase.init';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
@@ -64,16 +64,31 @@ function App() {
           console.log(user);
           setEmail('');
           setPassword('');
+          verifyEmail();
         })
         .catch(error => {
           console.log(error)
           setError(error.message)
         })
     }
+    const verifyEmail = () => {
+      sendEmailVerification(auth.currentUser)
+        .then(() => {
+          console.log('verify email sent')
+        })
+    }
 
 
     event.preventDefault();
   }
+  const handelResetPassword = () => {
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        console.log('reset password email sent')
+      })
+
+  }
+
   return (
 
 
@@ -102,6 +117,7 @@ function App() {
           <Form.Check type="checkbox" label="Already have an account" />
         </Form.Group>
         <h6 className='text-danger'>{error}</h6>
+        <Button onClick={handelResetPassword} variant="link">Forget Password</Button> <br />
         <Button variant="primary" type="submit">
           {registird ? "Log In" : "Register"}
         </Button>
