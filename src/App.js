@@ -1,35 +1,71 @@
 
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import app from './firebase.init';
-import { getAuth } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 import { useState } from 'react';
+import { Form } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 const auth = getAuth(app);
 
 
 function App() {
-  const [user, setUser] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   const handelEmailAdd = event => {
-    console.log(event.target.value);
+    setEmail(event.target.value);
 
   }
   const handelPasswordAdd = event => {
-    console.log(event.target.value);
+    setPassword(event.target.value);
 
   }
 
   const handelSubmitFrom = (event) => {
-    console.log("submit button kaj korche")
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(result => {
+        const user = result.user;
+        console.log(user);
+      })
+      .catch(error => {
+        console.log(error)
+      })
+
     event.preventDefault();
   }
   return (
-    <div className="App">
-      <form onSubmit={handelSubmitFrom}>
-        <input onBlur={handelEmailAdd} type="email" /> <br />
-        <input onBlur={handelPasswordAdd} type="password" /><br />
-        <input type="submit" value="login" />
-      </form>
 
+
+    <div className="registration w-50 mx-auto mt-4">
+      <h1 className='text-primary '>Please Register!!</h1>
+      <Form onSubmit={handelSubmitFrom}>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control onBlur={handelEmailAdd} type="email" placeholder="Enter email" />
+          <Form.Text className="text-muted">
+            We'll never share your email with anyone else.
+          </Form.Text>
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control onBlur={handelPasswordAdd} type="password" placeholder="Password" />
+        </Form.Group>
+
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+
+
+
+      {/* <form onSubmit={handelSubmitFrom}>
+      //   <input onBlur={handelEmailAdd} type="email" /> <br />
+      //   <input onBlur={handelPasswordAdd} type="password" /><br />
+      //   <input type="submit" value="login" />
+      // </form> */}
     </div>
   );
 }
